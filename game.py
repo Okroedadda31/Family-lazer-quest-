@@ -1,38 +1,130 @@
 import streamlit as st
 import random
+import time
 
-st.set_page_config(page_title="Family Laser Quest", page_icon="🔫")
+st.set_page_config(
+    page_title="Vinyl Warrior: Rise of the Riddim",
+    page_icon="🌴"
+)
 
-st.title("🔫 Family Laser Quest")
+# Game title
+st.title("🌴 VINYL WARRIOR: Rise of the Riddim 🔥")
 
-st.write("A fun family laser battle game!")
+st.write(
+    "A Jamaican adventure where rhythm, culture and courage rule the island!"
+)
 
-if "scores" not in st.session_state:
-    st.session_state.scores = {}
+# Start values
+if "score" not in st.session_state:
+    st.session_state.score = 0
+    st.session_state.level = 1
+    st.session_state.power = "None"
+    st.session_state.items = []
 
-players = st.text_input("Enter player names (separated by commas):", "Player 1, Player 2")
+# Character choice
+character = st.selectbox(
+    "Choose your warrior:",
+    [
+        "Malik - Riddim Warrior 🎧",
+        "Amara - Dub Queen 👑",
+        "Jax - Future Selector 🤖"
+    ]
+)
 
-if st.button("Start / Reset Game"):
-    names = [p.strip() for p in players.split(",") if p.strip()]
-    st.session_state.scores = {name: 0 for name in names}
-    st.success("Game started!")
+terrain = st.selectbox(
+    "Choose your adventure:",
+    [
+        "Kingston Streets 🌆",
+        "Blue Mountain Jungle 🌴",
+        "Caribbean Coast 🌊"
+    ]
+)
 
-if st.session_state.scores:
-    st.subheader("Players")
+st.divider()
 
-    for player in list(st.session_state.scores.keys()):
-        col1, col2 = st.columns([2, 1])
+st.subheader(f"Level {st.session_state.level}")
+st.write(f"Warrior: {character}")
+st.write(f"Location: {terrain}")
 
-        with col1:
-            st.write(f"🎯 {player}: {st.session_state.scores[player]} points")
+# Collect items
+items = [
+    "🥥 Coconut Power",
+    "🌿 Herbal Energy",
+    "🎵 Golden Vinyl",
+    "🔥 Fire Riddim",
+    "💎 Island Gem"
+]
 
-        with col2:
-            if st.button(f"Laser hit {player}", key=player):
-                points = random.randint(1, 10)
-                st.session_state.scores[player] += points
-                st.rerun()
+if st.button("Walk Forward 🚶🏾"):
+    
+    item = random.choice(items)
+    
+    st.session_state.items.append(item)
+    st.session_state.score += 10
+    
+    st.success(f"You found: {item}")
+    
+    if item == "🔥 Fire Riddim":
+        st.session_state.power = "Fire Blast 🔥"
+    elif item == "🎵 Golden Vinyl":
+        st.session_state.power = "Vinyl Shield 🎧"
+    elif item == "🌿 Herbal Energy":
+        st.session_state.power = "Nature Strength 🌿"
 
-    winner = max(st.session_state.scores, key=st.session_state.scores.get)
-    st.subheader(f"🏆 Leader: {winner}")
+# Challenge
+questions = [
+    ("What is the capital of Jamaica?", "Kingston"),
+    ("What instrument is famous in reggae?", "Drums"),
+    ("Which sea surrounds Jamaica?", "Caribbean")
+]
 
-st.write("Keep playing until someone reaches the highest score!")
+question, answer = random.choice(questions)
+
+st.subheader("🧠 Jungle Challenge")
+
+user_answer = st.text_input(question)
+
+if st.button("Answer Challenge"):
+    if user_answer.lower() == answer.lower():
+        st.session_state.score += 20
+        st.success("Correct! Bonus points added 🎉")
+    else:
+        st.error("Not quite! Keep learning!")
+
+# Enemy battle
+st.subheader("⚔️ Enemy Encounter")
+
+if st.button("Battle Enemy"):
+    
+    power = random.choice(
+        [
+            "Vinyl Laser 🎧",
+            "Fire Ball 🔥",
+            "Hurricane Wind 🌪️",
+            "Dub Blast 🔊"
+        ]
+    )
+
+    st.write(f"You used {power}!")
+    
+    win = random.choice([True, True, False])
+
+    if win:
+        st.success("Enemy defeated! Riddim power grows!")
+        st.session_state.score += 50
+        st.session_state.level += 1
+    else:
+        st.warning("Enemy escaped! Train harder!")
+
+# Status
+st.divider()
+
+st.subheader("🏆 Warrior Status")
+
+st.write("Score:", st.session_state.score)
+st.write("Power:", st.session_state.power)
+st.write("Collected:", st.session_state.items)
+
+if st.session_state.level >= 5:
+    st.balloons()
+    st.success("👑 You have reached KING STATUS!")
